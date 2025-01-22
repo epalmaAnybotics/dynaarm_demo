@@ -118,6 +118,18 @@ def launch_setup(context, *args, **kwargs):
             "stderr": "screen",
         },
     )
+    
+    status_controller_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["dynaarm_status_controller"],
+    )
+    
+    freeze_controller_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["freeze_controller"],
+    )
 
     gravity_compensation_controller_node = Node(
         package="controller_manager",
@@ -128,7 +140,7 @@ def launch_setup(context, *args, **kwargs):
     freedrive_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["freedrive_controller"],
+        arguments=["freedrive_controller", "--inactive"],
     )
 
     pid_tuner_node = Node(
@@ -149,18 +161,13 @@ def launch_setup(context, *args, **kwargs):
         arguments=["cartesian_motion_controller", "--inactive"],
     )
 
-    status_controller_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["dynaarm_status_controller"],
-    )
-
     delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner_node,
             on_exit=[
-                gravity_compensation_controller_node,
                 status_controller_node,
+                freeze_controller_node,
+                gravity_compensation_controller_node,                                
                 joint_trajectory_controller_node,
                 cartesian_motion_controller_node,
                 freedrive_controller_node,

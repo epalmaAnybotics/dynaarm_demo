@@ -112,10 +112,16 @@ def launch_setup(context, *args, **kwargs):
         },
     )
 
-    freedrive_controller_node = Node(
+    status_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["freedrive_controller", "--inactive"],
+        arguments=["dynaarm_status_controller"],
+    )
+    
+    freeze_controller_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["freeze_controller"],
     )
 
     gravity_compensation_controller_node = Node(
@@ -124,10 +130,22 @@ def launch_setup(context, *args, **kwargs):
         arguments=["gravity_compensation_controller"],
     )
 
+    freedrive_controller_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["freedrive_controller", "--inactive"],
+    )
+
+    pid_tuner_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["pid_tuner", "--inactive"],
+    )
+
     joint_trajectory_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_trajectory_controller"],
+        arguments=["joint_trajectory_controller", "--inactive"],
     )
 
     cartesian_motion_controller_node = Node(
@@ -136,21 +154,17 @@ def launch_setup(context, *args, **kwargs):
         arguments=["cartesian_motion_controller", "--inactive"],
     )
 
-    status_controller_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["dynaarm_status_controller"],
-    )
-
     delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner_node,
             on_exit=[
-                gravity_compensation_controller_node,
                 status_controller_node,
+                freeze_controller_node,
+                gravity_compensation_controller_node,                                
                 joint_trajectory_controller_node,
                 cartesian_motion_controller_node,
                 freedrive_controller_node,
+                pid_tuner_node,
             ],
         )
     )
