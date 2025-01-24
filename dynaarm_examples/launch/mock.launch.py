@@ -117,7 +117,7 @@ def launch_setup(context, *args, **kwargs):
         executable="spawner",
         arguments=["dynaarm_status_controller"],
     )
-    
+
     freeze_controller_node = Node(
         package="controller_manager",
         executable="spawner",
@@ -160,7 +160,7 @@ def launch_setup(context, *args, **kwargs):
             on_exit=[
                 status_controller_node,
                 freeze_controller_node,
-                gravity_compensation_controller_node,                                
+                gravity_compensation_controller_node,
                 joint_trajectory_controller_node,
                 cartesian_motion_controller_node,
                 freedrive_controller_node,
