@@ -2,8 +2,8 @@ controller_manager:
   ros__parameters:
     update_rate: 1000
 
-    dynaarm_status_controller:
-      type: dynaarm_controllers/StatusController
+    dynaarm_status_broadcaster:
+      type: dynaarm_controllers/StatusBroadcaster
 
     gravity_compensation_controller:
       type: dynaarm_controllers/GravityCompensationController
@@ -46,7 +46,7 @@ pid_tuner:
       - wrist_rotation
 
 
-dynaarm_status_controller:
+dynaarm_status_broadcaster:
   ros__parameters:
     joints:
       - shoulder_rotation
