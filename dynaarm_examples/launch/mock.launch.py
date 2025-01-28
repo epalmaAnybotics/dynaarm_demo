@@ -112,10 +112,10 @@ def launch_setup(context, *args, **kwargs):
         },
     )
 
-    status_controller_node = Node(
+    status_broadcaster_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["dynaarm_status_controller"],
+        arguments=["dynaarm_status_broadcaster"],
     )
 
     freeze_controller_node = Node(
@@ -158,7 +158,7 @@ def launch_setup(context, *args, **kwargs):
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner_node,
             on_exit=[
-                status_controller_node,
+                status_broadcaster_node,
                 freeze_controller_node,
                 gravity_compensation_controller_node,
                 joint_trajectory_controller_node,
