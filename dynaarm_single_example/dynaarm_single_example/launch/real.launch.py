@@ -1,4 +1,4 @@
-# Copyright 2024 Duatic AG
+# Copyright 2025 Duatic AG
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that
 # the following conditions are met:
@@ -51,11 +51,11 @@ def launch_setup(context, *args, **kwargs):
     version_value = version.perform(context)
 
     # Load the robot description
-    pkg_share_description = FindPackageShare(package="dynaarm_description").find(
-        "dynaarm_description"
+    pkg_share_description = FindPackageShare(package="dynaarm_single_example_description").find(
+        "dynaarm_single_example_description"
     )
     doc = xacro.parse(
-        open(os.path.join(pkg_share_description, "urdf/dynaarm_standalone.urdf.xacro"))
+        open(os.path.join(pkg_share_description, "urdf/dynaarm_single_example.urdf.xacro"))
     )
     xacro.process_doc(
         doc,
@@ -78,7 +78,10 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Launch RViz
-    rviz_config_file = PathJoinSubstitution([pkg_share_description, "config", "config.rviz"])
+    pkg_share_description_base = FindPackageShare(package="dynaarm_description").find(
+        "dynaarm_description"
+    )
+    rviz_config_file = PathJoinSubstitution([pkg_share_description_base, "config/config.rviz"])
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -96,7 +99,7 @@ def launch_setup(context, *args, **kwargs):
 
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare("dynaarm_examples"),
+            FindPackageShare("dynaarm_single_example"),
             "config",
             "controllers.yaml",
         ]
@@ -114,7 +117,7 @@ def launch_setup(context, *args, **kwargs):
         executable="e_stop_node",
         name="e_stop_node",
         output="screen",
-        parameters=[{"emergency_stop_button": 8}],  # Change button index here
+        parameters=[{"emergency_stop_button": 9}],  # Change button index here
     )
 
     control_node = Node(
@@ -169,6 +172,12 @@ def launch_setup(context, *args, **kwargs):
         arguments=["cartesian_motion_controller", "--inactive"],
     )
 
+    position_controller_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["position_controller", "--inactive"],
+    )
+
     delay_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner_node,
@@ -181,6 +190,7 @@ def launch_setup(context, *args, **kwargs):
                 cartesian_motion_controller_node,
                 freedrive_controller_node,
                 pid_tuner_node,
+                position_controller_node,
             ],
         )
     )
