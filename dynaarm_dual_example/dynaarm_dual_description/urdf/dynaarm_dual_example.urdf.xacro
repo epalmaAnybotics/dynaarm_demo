@@ -21,11 +21,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” 
   <!-- real, mock, sim -->
   <xacro:arg name="mode" default="mock" />
   <!-- physical ethercat bus, only used for real -->
-  <xacro:arg name="ethercat_bus" default="eth0" />
+  <xacro:arg name="ethercat_bus_1" default="eth0" />
+  <xacro:arg name="ethercat_bus_2" default="eth1" />
   <!-- Change to add covers to the arm -->
   <xacro:arg name="covers" default="false" />
   <!-- v1, v2, ... -->
-  <xacro:arg name="version" default="baracuda12" />
+  <xacro:arg name="version_1" default="baracuda12" />
+  <xacro:arg name="version_2" default="baracuda12" />
 
   <xacro:include filename="$(find dynaarm_description)/urdf/dynaarm.urdf.xacro" />
 
@@ -61,9 +63,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” 
                 parent_link="table"
                 dof="$(arg dof)"
                 mode="$(arg mode)"
-                ethercat_bus="$(arg ethercat_bus)"
+                ethercat_bus="$(arg ethercat_bus_1)"
                 covers="$(arg covers)"
-                version="$(arg version)">
+                version="$(arg version_1)">
     <origin xyz="-0.5 0 0.085" rpy="0.0 0.0 0.0" />
   </xacro:dynaarm>
 
@@ -72,9 +74,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” 
                 parent_link="table"
                 dof="$(arg dof)"
                 mode="$(arg mode)"
-                ethercat_bus="$(arg ethercat_bus)"
+                ethercat_bus="$(arg ethercat_bus_2)"
                 covers="$(arg covers)"
-                version="$(arg version)">
+                version="$(arg version_2)">
     <origin xyz="0.5 0 0.085" rpy="0.0 0.0 0.0" />
   </xacro:dynaarm>
 
