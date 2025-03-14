@@ -37,4 +37,3 @@ Example if the ethercat bus is plugged to `eth0`
 ```
 ros2 launch dynaarm_single_example real.launch.py ethercat_bus:=eth0
 ```
-
