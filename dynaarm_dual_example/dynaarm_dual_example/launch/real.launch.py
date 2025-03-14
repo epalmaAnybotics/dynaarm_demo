@@ -39,16 +39,19 @@ from launch_ros.actions import Node
 
 def launch_setup(context, *args, **kwargs):
 
-    ethercat_bus = LaunchConfiguration("ethercat_bus")
-    dof = LaunchConfiguration("dof")
+    ethercat_bus_1 = LaunchConfiguration("ethercat_bus_1")
+    ethercat_bus_2 = LaunchConfiguration("ethercat_bus_2")
+
     covers = LaunchConfiguration("covers")
-    version = LaunchConfiguration("version")
+    version_1 = LaunchConfiguration("version_1")
+    version_2 = LaunchConfiguration("version_2")
     start_rviz = LaunchConfiguration("start_rviz")
 
-    ethercat_bus_value = ethercat_bus.perform(context)
-    dof_value = dof.perform(context)
+    ethercat_bus_1_value = ethercat_bus_1.perform(context)
+    ethercat_bus_2_value = ethercat_bus_2.perform(context)
     covers_value = covers.perform(context)
-    version_value = version.perform(context)
+    version_1_value = version_1.perform(context)
+    version_2_value = version_2.perform(context)
 
     # Load the robot description
     pkg_share_description = FindPackageShare(package="dynaarm_single_example_description").find(
@@ -60,10 +63,11 @@ def launch_setup(context, *args, **kwargs):
     xacro.process_doc(
         doc,
         mappings={
-            "ethercat_bus": ethercat_bus_value,
-            "dof": dof_value,
+            "ethercat_bus_1": ethercat_bus_1_value,
+            "ethercat_bus_2": ethercat_bus_2_value,
             "covers": covers_value,
-            "version": version_value,
+            "version_1": version_1_value,
+            "version_2": version_2_value,
             "mode": "real",
         },
     )
@@ -133,49 +137,38 @@ def launch_setup(context, *args, **kwargs):
     status_broadcaster_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["dynaarm_status_broadcaster"],
+        arguments=["dynaarm_status_broadcaster_arm_1", "dynaarm_status_broadcaster_arm_2"],
     )
 
     freeze_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["freeze_controller"],
+        arguments=["freeze_controller_arm_1", "freeze_controller_arm_2"],
     )
 
     gravity_compensation_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["gravity_compensation_controller"],
+        arguments=[
+            "gravity_compensation_controller_arm_1",
+            "gravity_compensation_controller_arm_2",
+        ],
     )
 
     freedrive_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["freedrive_controller", "--inactive"],
-    )
-
-    pid_tuner_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["pid_tuner", "--inactive"],
+        arguments=["freedrive_controller_arm_1", "freedrive_controller_arm_2", "--inactive"],
     )
 
     joint_trajectory_controller_node = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_trajectory_controller", "--inactive"],
-    )
-
-    cartesian_motion_controller_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["cartesian_motion_controller", "--inactive"],
-    )
-
-    position_controller_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["position_controller", "--inactive"],
+        arguments=[
+            "joint_trajectory_controller_arm_1",
+            "joint_trajectory_controller_arm_2",
+            "--inactive",
+        ],
     )
 
     delay_after_joint_state_broadcaster_spawner = RegisterEventHandler(
@@ -187,10 +180,7 @@ def launch_setup(context, *args, **kwargs):
                 freeze_controller_node,
                 gravity_compensation_controller_node,
                 joint_trajectory_controller_node,
-                cartesian_motion_controller_node,
                 freedrive_controller_node,
-                pid_tuner_node,
-                position_controller_node,
             ],
         )
     )
@@ -212,17 +202,16 @@ def generate_launch_description():
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
-            name="ethercat_bus",
+            name="ethercat_bus_1",
             default_value="enp86s0",
-            description="The ethercat bus id or name.",
+            description="The ethercat bus id or name of the first robot.",
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            name="dof",
-            choices=["1", "2", "3", "4", "5", "6"],
-            default_value="6",
-            description="Select the desired degrees of freedom (dof)",
+            name="ethercat_bus_2",
+            default_value="enp86s1",
+            description="The ethercat bus id or name of the second robot.",
         )
     )
     declared_arguments.append(
@@ -234,10 +223,18 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            name="version",
+            name="version_1",
             default_value="baracuda12",
             choices=["arowana4", "baracuda12"],
-            description="Select the desired version of robot ",
+            description="Select the desired version of robot 1",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            name="version_2",
+            default_value="baracuda12",
+            choices=["arowana4", "baracuda12"],
+            description="Select the desired version of robot 2",
         )
     )
     declared_arguments.append(
