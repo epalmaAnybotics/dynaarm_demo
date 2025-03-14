@@ -45,11 +45,11 @@ def launch_setup(context, *args, **kwargs):
     version_value = version.perform(context)
 
     # Load the robot description
-    pkg_share_description = FindPackageShare(package="dynaarm_description").find(
-        "dynaarm_description"
+    pkg_share_description = FindPackageShare(package="dynaarm_single_example_description").find(
+        "dynaarm_single_example_description"
     )
     doc = xacro.parse(
-        open(os.path.join(pkg_share_description, "urdf/dynaarm_standalone.urdf.xacro"))
+        open(os.path.join(pkg_share_description, "urdf/dynaarm_single_example.urdf.xacro"))
     )
     xacro.process_doc(
         doc,
@@ -71,7 +71,10 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # Launch RViz
-    rviz_config_file = PathJoinSubstitution([pkg_share_description, "config/config.rviz"])
+    pkg_share_description_base = FindPackageShare(package="dynaarm_description").find(
+        "dynaarm_description"
+    )
+    rviz_config_file = PathJoinSubstitution([pkg_share_description_base, "config/config.rviz"])
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
