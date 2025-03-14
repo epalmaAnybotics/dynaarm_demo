@@ -62,8 +62,8 @@ def launch_setup(context, *args, **kwargs):
         "version": version_value,
     }
 
-    dynaarm_moveit_pkg = "dynaarm_moveit_config"
-    dynaarm_examples_pkg = "dynaarm_examples"
+    dynaarm_moveit_pkg = "dynaarm_single_example_moveit_config"
+    dynaarm_examples_pkg = "dynaarm_single_example"
 
     moveit_config = (
         MoveItConfigsBuilder("dynaarm", package_name=dynaarm_moveit_pkg)
