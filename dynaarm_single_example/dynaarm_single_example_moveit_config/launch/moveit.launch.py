@@ -35,7 +35,6 @@ from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-
 from moveit_configs_utils import MoveItConfigsBuilder
 
 
