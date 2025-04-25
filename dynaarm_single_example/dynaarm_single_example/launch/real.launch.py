@@ -105,12 +105,12 @@ def launch_setup(context, *args, **kwargs):
         ]
     )
 
-    joy_node = Node(
-        package="joy",
-        executable="game_controller_node",
-        output="screen",
-        parameters=[{"autorepeat_rate": 100.0}],  # Set autorepeat to 100 Hz
-    )
+    # joy_node = Node(
+    #     package="joy",
+    #     executable="game_controller_node",
+    #     output="screen",
+    #     parameters=[{"autorepeat_rate": 100.0}],  # Set autorepeat to 100 Hz
+    # )
 
     e_stop_node = Node(
         package="dynaarm_extensions",
@@ -200,7 +200,7 @@ def launch_setup(context, *args, **kwargs):
         robot_state_pub_node,
         joint_state_broadcaster_spawner_node,
         delay_after_joint_state_broadcaster_spawner,
-        joy_node,
+        # joy_node,
         e_stop_node,
     ]
 
