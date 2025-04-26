@@ -194,7 +194,7 @@ def launch_setup(context, *args, **kwargs):
         joint_state_broadcaster_spawner_node,
         delay_after_joint_state_broadcaster_spawner,
         joy_node,
-        e_stop_node,
+        # e_stop_node,
     ]
 
     return nodes_to_start
